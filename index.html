@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WasteWave – interactieve rondleiding</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial, sans-serif;background:#071522;color:#eef7ff}
+header{padding:20px 24px;background:#0d2638;border-bottom:1px solid #28516b}
+h1{margin:0 0 6px;font-size:26px;color:#67d7e8}
+header p{margin:0;color:#b9d2df}
+main{max-width:1100px;margin:auto;padding:22px;display:grid;grid-template-columns:1.25fr .85fr;gap:20px}
+.card{background:#102b3e;border:1px solid #2a526b;border-radius:14px;padding:18px}
+h2{margin:0 0 12px;font-size:19px}
+.ship{position:relative;min-height:430px;background:linear-gradient(#a8dbe8 0 43%,#176184 43% 100%);border-radius:12px;overflow:hidden;border:2px solid #4b8298}
+.sea{position:absolute;left:0;right:0;bottom:0;height:57%;background:repeating-linear-gradient(0deg,#176184,#176184 18px,#1b6d8d 19px,#1b6d8d 21px)}
+.boat{position:absolute;left:7%;right:7%;bottom:22%;height:42%;background:#e6edf0;clip-path:polygon(5% 0,95% 0,100% 75%,90% 100%,10% 100%,0 75%);border:3px solid #17394c}
+.deck{position:absolute;left:13%;right:13%;bottom:46%;height:17%;background:#f5f8f8;border:3px solid #17394c}
+.bridge{position:absolute;left:36%;width:28%;bottom:63%;height:17%;background:#d8e9ed;border:3px solid #17394c;border-radius:5px 5px 0 0}
+.window{height:40%;margin:10px 7px;background:#3d8199;border:2px solid #183c50}
+.stack{position:absolute;left:22%;bottom:63%;height:22%;width:9%;background:#e9a64d;border:3px solid #17394c}
+.stack:after{content:"";position:absolute;top:-12px;left:-4px;width:calc(100% + 8px);height:12px;background:#9c6031}
+.area{position:absolute;border:2px solid #07374a;background:#19a5b8;color:#042534;font-weight:bold;border-radius:8px;padding:8px 5px;cursor:pointer;text-align:center;box-shadow:0 3px 0 #07374a;min-width:85px}
+.area:hover,.area:focus{background:#ffe08a;outline:3px solid #fff}
+#btn-bridge{left:39%;top:15%}
+#btn-deck{left:8%;top:48%}
+#btn-sort{right:8%;top:49%}
+#btn-storage{left:12%;bottom:12%}
+#btn-reactor{right:12%;bottom:12%}
+#btn-engine{left:42%;bottom:5%}
+.hint{position:absolute;top:10px;left:12px;color:#163b4c;background:#ffffffc9;padding:7px 10px;border-radius:8px;font-size:13px}
+.panel h2{color:#67d7e8}
+.panel p{line-height:1.55;color:#d8e7ee}
+.panel .sub{color:#9fc2d1;font-size:13px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+nav button{background:#1a526d;border:1px solid #3d829b;color:white;padding:9px 11px;border-radius:8px;cursor:pointer}
+nav button:hover,nav button.active{background:#67d7e8;color:#062333}
+footer{max-width:1100px;margin:0 auto;padding:0 22px 24px;color:#9fb9c8;font-size:13px}
+@media(max-width:760px){main{grid-template-columns:1fr;padding:12px}.ship{min-height:390px}.area{font-size:12px;min-width:72px;padding:7px 3px}}
+</style>
+</head>
+<body>
+<header><h1>🌊 WasteWave</h1><p>Interactieve rondleiding — klik op een onderdeel van het schip.</p></header>
+<main>
+<section class="card">
+<h2>Verken het schip</h2>
+<div class="ship" aria-label="Schematische afbeelding van het WasteWave-schip">
+ <div class="sea"></div><div class="boat"></div><div class="deck"></div>
+ <div class="bridge"><div class="window"></div></div><div class="stack"></div>
+ <div class="hint">Klik op een knop om meer te ontdekken</div>
+ <button class="area" id="btn-bridge" data-place="bridge">Brug</button>
+ <button class="area" id="btn-deck" data-place="deck">Werkdek</button>
+ <button class="area" id="btn-sort" data-place="sort">Sorteerhal</button>
+ <button class="area" id="btn-storage" data-place="storage">Afvalopslag</button>
+ <button class="area" id="btn-reactor" data-place="reactor">Kernreactor</button>
+ <button class="area" id="btn-engine" data-place="engine">Machinekamer</button>
+</div>
+<nav aria-label="Kies een ruimte">
+ <button data-place="bridge">Brug</button><button data-place="deck">Werkdek</button>
+ <button data-place="sort">Sorteerhal</button><button data-place="storage">Afvalopslag</button>
+ <button data-place="reactor">Kernreactor</button><button data-place="engine">Machinekamer</button>
+</nav>
+</section>
+<aside class="card panel" aria-live="polite">
+ <p class="sub" id="counter">ONDERDEEL 1 VAN 6</p>
+ <h2 id="title">De brug</h2>
+ <p id="description">Vanaf de brug bestuurt de bemanning het schip. Ze houden de route, de zee en de verzamellocaties in de gaten.</p>
+ <p id="detail">De navigatieapparatuur helpt om veilig tussen drijvend afval te varen.</p>
+ <p class="sub">Gebruik de knoppen op het schip of onder de afbeelding om verder te kijken.</p>
+</aside>
+</main>
+<footer>Conceptueel ontwerp van WasteWave. Het verzamelde afval wordt gesorteerd en opgeslagen; het wordt niet verbrand of als brandstof gebruikt. De kernreactor levert energie voor de elektrische aandrijving.</footer>
+<script>
+const places={
+ bridge:{title:"De brug",desc:"Vanaf de brug bestuurt de bemanning het schip. Ze houden de route, de zee en de verzamellocaties in de gaten.",detail:"De navigatieapparatuur helpt om veilig tussen drijvend afval te varen."},
+ deck:{title:"Het werkdek",desc:"Op het werkdek wordt drijvend afval uit het water gehaald.",detail:"Kranen en opvangsystemen brengen het afval aan boord. De bemanning werkt hier met beschermende kleding en veiligheidsmateriaal."},
+ sort:{title:"De sorteerhal",desc:"In de sorteerhal wordt het verzamelde afval uit elkaar gehaald en gesorteerd.",detail:"Plastic, metaal en ander materiaal worden apart gehouden. Zo kan het later op de juiste manier worden verwerkt of gerecycled."},
+ storage:{title:"De afvalopslag",desc:"Na het sorteren wordt het afval tijdelijk veilig opgeslagen.",detail:"Afgesloten opslagvakken voorkomen dat het afval terug in zee komt. Het afval wordt hier niet verbrand."},
+ reactor:{title:"De kernreactor",desc:"De kernreactor levert de energie voor het schip.",detail:"De warmte wordt gebruikt om stoom te maken. Die drijft een turbine en generator aan. De elektriciteit voedt de elektrische systemen en aandrijving."},
+ engine:{title:"De machinekamer",desc:"In de machinekamer zitten de elektromotoren en belangrijke technische systemen.",detail:"De elektromotoren zetten elektrische energie om in beweging en laten de schroeven draaien. De aandrijving gebruikt dus elektriciteit, niet het verzamelde afval."}
+};
+const order=Object.keys(places);
+function show(key){
+ const i=order.indexOf(key),p=places[key]; if(!p)return;
+ document.getElementById("counter").textContent=`ONDERDEEL ${i+1} VAN ${order.length}`;
+ document.getElementById("title").textContent=p.title;
+ document.getElementById("description").textContent=p.desc;
+ document.getElementById("detail").textContent=p.detail;
+ document.querySelectorAll("[data-place]").forEach(b=>b.classList.toggle("active",b.dataset.place===key));
+}
+document.querySelectorAll("[data-place]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.place)));
+</script>
+</body>
+</html>
